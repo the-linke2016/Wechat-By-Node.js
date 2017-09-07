@@ -1,1 +1,2 @@
-# Please run `npm install` first !
+#### Please run the code first !
+`npm install`
