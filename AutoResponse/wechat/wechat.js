@@ -1,5 +1,5 @@
-'use scrict'
-var sha1 = require('sha1');
+'use strict'
+
 var Promise = require('bluebird');
 var request = Promise.promisify(require('request'));
 var prefix = 'https://api.weixin.qq.com/cgi-bin/';
@@ -7,7 +7,7 @@ var api = {
     accessToken: prefix + 'token?grant_type=client_credential'
 }
 
-function Wechat (opts) {
+function Wechat(opts) {
     var that = this;
     this.appID = opts.appID;
     this.appSecret = opts.appSecret;
@@ -20,7 +20,7 @@ function Wechat (opts) {
                 data = JSON.parse(data);
             }
             catch (e) {
-                return that.updateAccessToken(); 
+                return that.updateAccessToken();
             }
 
             if (that.isValidAccessToken(data)) {
@@ -60,7 +60,7 @@ Wechat.prototype.updateAccessToken = function () {
         request({ url: url, json: true }).then(function (response) {
             var data = response.body;
             var now = (new Date().getTime());
-            var expires_in = now + (data.expires_in - 20) * 1000;
+            var expires_in = now + (data.expires_in - 20) * 1000;   // 单位是毫秒
             data.expires_in = expires_in;
 
             resolve(data);
@@ -68,24 +68,4 @@ Wechat.prototype.updateAccessToken = function () {
     })
 }
 
-module.exports = function (opts) {
-    var wechat = new Wechat(opts);
-
-    return function *(next) {
-        console.log(this.query);
-
-        var token = opts.token;
-        var signature = this.query.signature;
-        var nonce = this.query.nonce;
-        var timestamp = this.query.timestamp;
-        var echostr = this.query.echostr;
-        var str = [token, timestamp, nonce].sort().join('');
-        var sha = sha1(str);
-
-        if (sha == signature) {
-            this.body = echostr + "";
-        } else {
-            this.body = "wrong";
-        }
-    }
-}
+module.exports = Wechat;

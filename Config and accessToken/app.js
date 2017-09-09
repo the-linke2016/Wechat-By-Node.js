@@ -1,4 +1,4 @@
-'use scrict'
+'use strict'
 var Koa = require('koa');
 var path = require('path');
 var wechat = require("./wechat/g");

@@ -1,4 +1,4 @@
-'use scrict'
+'use strict'
 var fs = require('fs');
 var Promise = require('bluebird');
 
